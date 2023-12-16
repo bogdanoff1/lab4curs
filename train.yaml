@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: trainstation-service
+spec:
+   strategy:
+    type: Recreate
+   selector:
+    matchLabels:
+      app: trainstation-service
+   template:
+    metadata:
+      labels:
+        app: trainstation-service
+    spec:
+      containers:
+      - name: trainstation-service
+        image: bodya/trainstation-service:latest
+        imagePullPolicy: Always
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Production
+        - name: TrainStationPath
+          value: /usr/data
+        ports:
+        - containerPort: 5015
+        volumeMounts:
+        - name: sqlite-volume
+          mountPath: /usr/data
+      volumes:
+      - name: sqlite-volume
+        persistentVolumeClaim:
+          claimName: sqlite-pvc
+
+  
